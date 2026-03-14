@@ -483,3 +483,124 @@ body {
     justify-content: center;
   }
 }
+
+/* --- Download Modal --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #cecece;
+  border: 6px solid #f0f0f0;
+  border-right-color: #7b7b7b;
+  border-bottom-color: #7b7b7b;
+  width: 90%;
+  max-width: 600px;
+  padding: 8px;
+  position: relative;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 1);
+}
+
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 4px solid #1a1a1a;
+  pointer-events: none;
+}
+
+.modal-header {
+  background: #3c3c3c;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.modal-header h2 {
+  font-size: 2rem;
+  color: #fff;
+  text-shadow: 3px 3px 0 #000;
+}
+
+.close-btn {
+  background: #5c5c5c;
+  border: 3px solid #fff;
+  border-right-color: #2a2a2a;
+  border-bottom-color: #2a2a2a;
+  color: #fff;
+  font-family: var(--font-pixel);
+  font-size: 1.4rem;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  outline: 4px solid var(--highlight-yellow);
+}
+
+.modal-options-grid {
+  background: #3c3c3c;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  min-height: 200px;
+}
+
+.modal-footer {
+  background: #7b7b7b;
+  padding: 10px;
+  text-align: center;
+  font-size: 1.1rem;
+  border-top: 4px solid #1a1a1a;
+}
+
+.modal-btn-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.splash-text {
+  position: absolute;
+  top: -15px;
+  right: -25px;
+  color: #ffff3f;
+  font-family: var(--font-silk);
+  font-size: 1.2rem;
+  text-shadow: 2px 2px 0 #3f3f00;
+  transform: rotate(-20deg);
+  pointer-events: none;
+  z-index: 10;
+  animation: splashPulse 0.5s ease-in-out infinite alternate;
+  white-space: nowrap;
+}
+
+@keyframes splashPulse {
+  from {
+    transform: rotate(-20deg) scale(1);
+  }
+  to {
+    transform: rotate(-20deg) scale(1.1);
+  }
+}

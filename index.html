@@ -90,7 +90,7 @@
 
                 <div class="action-buttons">
                   <a href="https://github.com/Emerald-Legacy-Launcher/Emerald-Legacy-Launcher/releases/latest"
-                    class="main-btn get-launcher">
+                    class="main-btn get-launcher" id="main-download-btn">
                     <span>Get Launcher</span>
                     <img src="/logo.png" class="btn-icon">
                   </a>
@@ -107,7 +107,7 @@
                     <div class="carousel-header">Community Screenshots</div>
                     <div class="carousel-view">
                       <button class="carousel-arrow left">&lt;</button>
-                      <img src="/TU7_Panorama_Background_S.png" class="carousel-img">
+                      <img src="/Community/image.png" class="carousel-img">
                       <button class="carousel-arrow right">&gt;</button>
                     </div>
                     <div class="carousel-footer">See more in Discord</div>
@@ -148,9 +148,18 @@
           <section class="tab-content" id="media">
             <div class="home-layout">
               <div class="features-row" style="flex-wrap: wrap; gap: 10px;">
-                <img src="/TU7_Panorama_Background_S.png" style="width: 30%; border: 2px solid #fff;">
-                <img src="/TU7_Panorama_Background_S.png" style="width: 30%; border: 2px solid #fff;">
-                <img src="/TU7_Panorama_Background_S.png" style="width: 30%; border: 2px solid #fff;">
+                <img src="/Community/image.png"
+                  style="width: 31%; border: 2px solid #fff; aspect-ratio: 16/9; object-fit: cover;">
+                <img src="/Community/image2.png"
+                  style="width: 31%; border: 2px solid #fff; aspect-ratio: 16/9; object-fit: cover;">
+                <img src="/Community/image3.png"
+                  style="width: 31%; border: 2px solid #fff; aspect-ratio: 16/9; object-fit: cover;">
+                <img src="/Community/image4.png"
+                  style="width: 31%; border: 2px solid #fff; aspect-ratio: 16/9; object-fit: cover;">
+                <img src="/Community/image5.png"
+                  style="width: 31%; border: 2px solid #fff; aspect-ratio: 16/9; object-fit: cover;">
+                <img src="/Community/image6.png"
+                  style="width: 31%; border: 2px solid #fff; aspect-ratio: 16/9; object-fit: cover;">
               </div>
               <div class="cta-section">
                 <h2>Community Gallery</h2>
@@ -166,12 +175,16 @@
               </div>
               <div class="action-buttons" style="margin-top: 20px;">
                 <a href="https://github.com/Emerald-Legacy-Launcher/Emerald-Legacy-Launcher/releases/latest"
-                  class="main-btn">
+                  class="main-btn" id="download-win">
                   <span>Download for Windows</span>
                 </a>
                 <a href="https://github.com/Emerald-Legacy-Launcher/Emerald-Legacy-Launcher/releases/latest"
-                  class="main-btn">
+                  class="main-btn" id="download-linux">
                   <span>Download for Linux</span>
+                </a>
+                <a href="https://github.com/Emerald-Legacy-Launcher/Emerald-Legacy-Launcher/releases/latest"
+                  class="main-btn" id="download-macos">
+                  <span>Download for macOS</span>
                 </a>
               </div>
             </div>
@@ -191,6 +204,22 @@
       </div>
     </div>
   </div>
+
+  <div id="download-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Select Downloader</h2>
+        <button id="close-modal" class="close-btn">X</button>
+      </div>
+      <div id="modal-options" class="modal-options-grid">
+        <!-- Dynamic download buttons will be inserted here -->
+      </div>
+      <div class="modal-footer">
+        <p>Choose the format that works best for your system.</p>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 
