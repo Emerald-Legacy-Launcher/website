@@ -1,6 +1,80 @@
 import './style.css';
 
+class AudioManager {
+  private musicFiles = ['/music/music1.ogg', '/music/music2.ogg', '/music/music3.ogg', '/music/music4.ogg', '/music/music5.ogg'];
+  private musicIndex = Math.floor(Math.random() * 5);
+  private music: HTMLAudioElement;
+  private isMuted = false;
+  private hasInteracted = false;
+
+  constructor() {
+    this.music = new Audio(this.musicFiles[this.musicIndex]);
+    this.music.volume = 0.3;
+    this.music.preload = 'auto';
+    this.music.addEventListener('ended', () => this.nextTrack());
+
+    const savedMute = localStorage.getItem('emerald-muted') === 'true';
+    if (savedMute) {
+      this.isMuted = true;
+      this.music.pause();
+    }
+  }
+
+  private nextTrack() {
+    this.musicIndex = (this.musicIndex + 1) % this.musicFiles.length;
+    this.music.src = this.musicFiles[this.musicIndex];
+    this.music.preload = 'auto';
+    if (!this.isMuted) this.music.play().catch(() => { });
+  }
+
+  public start() {
+    if (this.hasInteracted || this.isMuted) return;
+    this.hasInteracted = true;
+    this.music.play().catch(() => { });
+  }
+
+  public toggleMute() {
+    this.isMuted = !this.isMuted;
+    localStorage.setItem('emerald-muted', String(this.isMuted));
+    if (this.isMuted) this.music.pause();
+    else {
+      if (this.hasInteracted) this.music.play().catch(() => { });
+      else {
+        this.hasInteracted = true;
+        this.music.play().catch(() => { });
+      }
+    }
+
+    this.updateUI();
+  }
+
+  public updateUI() {
+    const btn = document.getElementById('audio-toggle');
+    if (btn) {
+      btn.classList.toggle('muted', this.isMuted);
+      const icon = btn.querySelector('i');
+      if (icon) icon.className = this.isMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+    }
+  }
+
+  public playSFX(file: string) {
+    const sfx = new Audio(`/sounds/${file}`);
+    sfx.volume = 0.4;
+    sfx.play().catch(() => { });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  const audio = new AudioManager();
+  audio.updateUI();
+
+  const startAudio = () => audio.start();
+  document.addEventListener('click', startAudio, { once: true });
+  document.getElementById('audio-toggle')?.addEventListener('click', () => {
+    audio.playSFX('click.wav');
+    audio.toggleMute();
+  });
+
   const tabs = document.querySelectorAll('.tab-item');
   const contents = document.querySelectorAll('.tab-content');
 
@@ -10,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (index < 0) index = tabs.length - 1;
     if (index >= tabs.length) index = 0;
 
+    if (activeIndex !== index) audio.playSFX('click.wav');
     activeIndex = index;
 
     tabs.forEach((tab, i) => {
@@ -44,7 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
   let screenIndex = 0;
 
-  const rotateScreenshot = (dir: number) => {
+  const rotateScreenshot = (dir: number, isManual = false) => {
+    if (isManual) audio.playSFX('wood click.wav');
     screenIndex = (screenIndex + dir + screenshots.length) % screenshots.length;
     if (carouselImg) {
       carouselImg.style.opacity = '0';
@@ -55,8 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  document.querySelector('.carousel-arrow.left')?.addEventListener('click', () => rotateScreenshot(-1));
-  document.querySelector('.carousel-arrow.right')?.addEventListener('click', () => rotateScreenshot(1));
+  document.querySelector('.carousel-arrow.left')?.addEventListener('click', () => rotateScreenshot(-1, true));
+  document.querySelector('.carousel-arrow.right')?.addEventListener('click', () => rotateScreenshot(1, true));
 
   const repo = 'Emerald-Legacy-Launcher/Emerald-Legacy-Launcher';
   const modal = document.getElementById('download-modal');
@@ -102,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const specific = assets.find(a => a.name.endsWith('.AppImage') && a.name.includes(archTag));
       if (specific) return specific;
 
-      // Fallback to any AppImage
       return assets.find(a => a.name.endsWith('.AppImage'));
     }
     return null;
@@ -111,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const openDownloadModal = (osType: string) => {
     if (!modal || !modalOptions || !modalTitle) return;
 
+    audio.playSFX('click.wav');
     const { arch } = detectOS();
     let filteredAssets = [];
     let title = 'Select Downloader';
@@ -133,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isRecommended = asset.name === recommended?.name;
       return `
         <div class="modal-btn-container">
-          <a href="${asset.browser_download_url}" class="main-btn">
+          <a href="${asset.browser_download_url}" class="main-btn" onclick="window.playAudioSFX('levelup.ogg')">
             <span>${asset.name.split('_').pop()?.split('-').pop() || asset.name}</span>
           </a>
           ${isRecommended ? '<span class="splash-text">Recommended!</span>' : ''}
@@ -143,6 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modal.classList.add('active');
   };
+
+  (window as any).playAudioSFX = (file: string) => audio.playSFX(file);
 
   const updateDownloadButtons = async () => {
     try {
@@ -174,11 +252,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  closeModal?.addEventListener('click', () => modal?.classList.remove('active'));
-  modal?.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
-  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal?.classList.remove('active'); });
+  closeModal?.addEventListener('click', () => {
+    audio.playSFX('back.ogg');
+    modal?.classList.remove('active');
+  });
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      audio.playSFX('back.ogg');
+      modal.classList.remove('active');
+    }
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (modal?.classList.contains('active')) audio.playSFX('back.ogg');
+      modal?.classList.remove('active');
+    }
+  });
 
   updateDownloadButtons();
 
-  setInterval(() => rotateScreenshot(1), 5000);
+  setInterval(() => rotateScreenshot(1, false), 5000);
 });
