@@ -385,15 +385,19 @@ body {
   z-index: 2;
 }
 
-.get-launcher {
+.get-launcher,
+.github-repo,
+.join-discord {
   justify-content: space-between;
   padding: 0 20px;
+  height: 64px;
 }
 
 .join-discord {
-  flex-direction: row;
-  justify-content: center;
-  height: 56px;
+  font-size: 1.8rem;
+}
+
+.github-repo {
   font-size: 1.8rem;
 }
 
@@ -410,7 +414,8 @@ body {
 }
 
 .btn-icon,
-.btn-icon-discord {
+.btn-icon-discord,
+.btn-icon-github {
   height: 40px;
 }
 
@@ -611,6 +616,73 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nightly-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1a1a1a;
+  padding: 4px 12px;
+  border: 2px solid #7c7c7c;
+}
+
+.toggle-label {
+  font-family: var(--font-pixel);
+  font-size: 1.1rem;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #3c3c3c;
+  transition: .1s;
+  border: 2px solid #7c7c7c;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #fff;
+  transition: .1s;
+}
+
+input:checked+.slider {
+  background-color: var(--color-emerald);
+  border-color: #fff;
+}
+
+input:checked+.slider:before {
+  transform: translateX(22px);
 }
 
 .modal-header h2 {

@@ -141,6 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModal = document.getElementById('close-modal');
 
   let latestAssets: any[] = [];
+  let nightlyAssets: any[] = [];
+  let currentOSType = 'Windows';
 
   const detectOS = () => {
     const ua = window.navigator.userAgent.toLowerCase();
@@ -185,27 +187,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const openDownloadModal = (osType: string) => {
     if (!modal || !modalOptions || !modalTitle) return;
+    currentOSType = osType;
 
-    audio.playSFX('click.wav');
-    const { arch } = detectOS();
+    const nightlyToggle = document.getElementById('nightly-toggle') as HTMLInputElement;
+    const isNightly = nightlyToggle?.checked || false;
+    const assets = isNightly ? nightlyAssets : latestAssets;
+
     let filteredAssets = [];
     let title = 'Select Downloader';
 
     if (osType === 'Windows') {
-      filteredAssets = latestAssets.filter(a => a.name.endsWith('.exe') || a.name.endsWith('.msi'));
-      title = 'Emerald Legacy for Windows';
+      filteredAssets = assets.filter(a => a.name.endsWith('.exe') || a.name.endsWith('.msi'));
+      title = `Emerald Legacy for Windows ${isNightly ? '(Nightly)' : ''}`;
     } else if (osType === 'macOS') {
-      filteredAssets = latestAssets.filter(a => a.name.endsWith('.dmg'));
-      title = 'Emerald Legacy for macOS';
+      filteredAssets = assets.filter(a => a.name.endsWith('.dmg'));
+      title = `Emerald Legacy for macOS ${isNightly ? '(Nightly)' : ''}`;
     } else if (osType === 'Linux') {
-      filteredAssets = latestAssets.filter(a => a.name.endsWith('.AppImage') || a.name.endsWith('.deb') || a.name.endsWith('.rpm'));
-      title = 'Emerald Legacy for Linux';
+      filteredAssets = assets.filter(a => a.name.endsWith('.AppImage') || a.name.endsWith('.deb') || a.name.endsWith('.rpm'));
+      title = `Emerald Legacy for Linux ${isNightly ? '(Nightly)' : ''}`;
     }
 
+    const { arch } = detectOS();
     const recommended = getRecommendedAsset(osType, arch, filteredAssets);
 
     modalTitle.innerText = title;
-    modalOptions.innerHTML = filteredAssets.map(asset => {
+    modalOptions.innerHTML = filteredAssets.length > 0 ? filteredAssets.map(asset => {
       const isRecommended = asset.name === recommended?.name;
       return `
         <div class="modal-btn-container">
@@ -215,18 +221,34 @@ document.addEventListener('DOMContentLoaded', () => {
           ${isRecommended ? '<span class="splash-text">Recommended!</span>' : ''}
         </div>
       `;
-    }).join('');
+    }).join('') : `<div style="color: grey; font-size: 1.2rem; padding: 20px;">No builds found for this platform.</div>`;
 
     modal.classList.add('active');
   };
+
+  const nightlyToggle = document.getElementById('nightly-toggle');
+  nightlyToggle?.addEventListener('change', () => {
+    audio.playSFX('click.wav');
+    openDownloadModal(currentOSType);
+  });
 
   (window as any).playAudioSFX = (file: string) => audio.playSFX(file);
 
   const updateDownloadButtons = async () => {
     try {
-      const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
-      const data = await response.json();
-      latestAssets = data.assets;
+      const [latestRes, nightlyRes] = await Promise.all([
+        fetch(`https://api.github.com/repos/${repo}/releases/latest`),
+        fetch(`https://api.github.com/repos/${repo}/releases/tags/nightly`)
+      ]);
+
+      const [latestData, nightlyData] = await Promise.all([
+        latestRes.json(),
+        nightlyRes.json()
+      ]);
+
+      latestAssets = latestData.assets || [];
+      nightlyAssets = nightlyData.assets || [];
+
       const { os } = detectOS();
 
       const mainBtn = document.getElementById('main-download-btn');
@@ -248,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
       macBtn?.addEventListener('click', (e) => { e.preventDefault(); openDownloadModal('macOS'); });
 
     } catch (error) {
-      console.error('Error fetching latest release:', error);
+      console.error('Error fetching releases:', error);
     }
   };
 

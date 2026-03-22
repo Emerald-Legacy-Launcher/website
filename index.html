@@ -95,8 +95,17 @@
                 <div class="action-buttons">
                   <a href="https://github.com/Emerald-Legacy-Launcher/Emerald-Legacy-Launcher/releases/latest"
                     class="main-btn get-launcher" id="main-download-btn">
-                    <span>Get Launcher</span>
+                    <div class="btn-content">
+                      <span>Get Launcher</span>
+                    </div>
                     <img src="logo.png" class="btn-icon">
+                  </a>
+                  <a href="https://github.com/Emerald-Legacy-Launcher/Emerald-Legacy-Launcher"
+                    class="main-btn github-repo" target="_blank">
+                    <div class="btn-content">
+                      <span class="btn-title">GitHub Repo</span>
+                    </div>
+                    <img src="github-icon.png" class="btn-icon-github">
                   </a>
                   <a href="https://discord.gg/RHGRUwpmVc" class="main-btn join-discord" target="_blank">
                     <div class="btn-content">
@@ -311,7 +320,16 @@
   <div id="download-modal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 id="modal-title">Select Downloader</h2>
+        <div class="header-left">
+          <h2 id="modal-title">Select Downloader</h2>
+          <div class="nightly-toggle-wrapper">
+            <label class="switch">
+              <input type="checkbox" id="nightly-toggle">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Nightly</span>
+          </div>
+        </div>
         <button id="close-modal" class="close-btn">X</button>
       </div>
       <div id="modal-options" class="modal-options-grid">
